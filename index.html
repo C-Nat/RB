@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rigid Barrier Basis of Design: Conventional vs LS-DYNA (HK 2025)</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; line-height: 1.5; color: #2c3e50; max-width: 1000px; margin: 20px auto; padding: 20px; background-color: #f4f7f6; }
+        nav { background: #34495e; padding: 10px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px; position: sticky; top: 10px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        nav button { background: none; border: none; color: white; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        nav button:hover { background: #2980b9; }
+        nav button.active { background: #2980b9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        
+        .page { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .page.active { display: block; }
+
+        header { border-bottom: 3px solid #2980b9; margin-bottom: 30px; padding-bottom: 10px; }
+        h1 { color: #2980b9; font-size: 22pt; margin-bottom: 5px; }
+        h2 { background: #f2f4f4; color: #2c3e50; padding: 10px; border-left: 6px solid #2980b9; font-size: 16pt; margin-top: 25px; }
+        
+        .reference-tag { font-weight: bold; color: #7f8c8d; font-size: 0.9em; display: block; margin-bottom: 5px; }
+        .logic-box { background-color: #ebf5fb; border: 1px solid #d6eaf8; padding: 15px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #2980b9; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 10pt; }
+        th, td { border: 1px solid #bdc3c7; padding: 12px; text-align: left; }
+        th { background-color: #34495e; color: white; }
+        .table-container { overflow-x: auto; /* Enables horizontal scrolling */ }
+        
+         a:link, a:visited {
+        color: #0000EE; /* This makes links blue and stay blue after clicking */
+    }
+        
+        .footer { margin-top: 50px; font-size: 0.8em; color: #95a5a6; text-align: center; border-top: 1px solid #eee; padding-top: 10px; }
+        @media print { nav { display: none; } .page { display: block; page-break-after: always; box-shadow: none; border: 1px solid #eee; } }
+    </style>
+</head>
+<body>
+
+<nav>
+    <button class="active" onclick="showPage('conventional')">Conventional (2D/DAN-W/Freefield)</button>
+    <button onclick="showPage('lsdyna')">Proposed(LS-DYNA)</button>
+      <button onclick="showPage('mapping')">Methodology Mapping</button>
+      <button class="active" onclick="showPage('references')">References</button>
+</nav>
+
+<!-- PAGE 1: CONVENTIONAL WORKFLOW -->
+<div id="conventional" class="page active">
+    <header>
+    <h1>Basis of Design: Rigid Debris-Resisting Barrier</h1>
+    <p><strong>Region:</strong> Hong Kong SAR | <strong>Standards:</strong> GEO Reports & Technical Guidance Notes (2025 Update)</p>
+</header>
+
+<section>
+    <h2>1. Debris Mobility & Geometric Sizing</h2>
+    <span class="reference-tag">Ref: GEO Report No. 270 | GEO Report No. 339</span>
+    <ul>
+        <li><strong>Free-Field Extraction:</strong> Extract peak velocity (<code>v_max</code>) and flow thickness (<code>h_max</code>) from numerical models.</li>
+        <li><strong>Retention Capacity:</strong> Calculated using the design landslide volume plus an <strong>8% bulk factor</strong>. The storage wedge is modeled using an assumed storage angle (typically 1/2 to 2/3 of the natural slope).</li>
+        <li><strong>Surge-up Height (h_s):</strong> Based on the Energy Principle: <code>h_s = h + v²/(2g)</code>.</li>
+    </ul>
+    <div class="logic-box">
+        <strong>Justification:</strong> The 8% bulk factor accounts for volume dilation during transport. The surge-up check ensures the barrier crest level is sufficient to prevent overtopping from the frontal wave energy.
+    </div>
+</section>
+
+<section>
+    <h2>2. Dynamic Impact Force & α Coefficient</h2>
+    <span class="reference-tag">Ref: TGN 52 | GEO Report No. 358</span>
+    <ul>
+        <li><strong>Hydrodynamic Force:</strong> <code>p_dyn = α ρ v²</code></li>
+        <li><strong>Evolution of α:</strong> The coefficient is updated from 2.5 (GEO 270) to <strong>1.5</strong>.</li>
+        <li><strong>Load Classification:</strong> Reclassified as a <strong>Dead Load</strong> (Action) rather than a surcharge.</li>
+    </ul>
+    <div class="logic-box">
+        <strong>Justification:</strong> The reduction to 1.5 is based on local back-analysis of landslide events showing that 2.5 was overly conservative for rigid structures. Classification as a Dead Load reflects its nature as a primary gravity-driven mass.
+    </div>
+</section>
+
+<section>
+    <h2>3. Velocity-Stepped Filling Approach</h2>
+    <span class="reference-tag">Ref: GEO Report No. 339 | TGN 52</span>
+    <ul>
+        <li><strong>Legacy Approach (GEO 270):</strong> Applied peak thickness and peak velocity across all scenarios simultaneously.</li>
+        <li><strong>Modern Approach (GEO 339):</strong> Introduced the <strong>Velocity-Stepped Assumption</strong>. The filling process is analyzed in stages.</li>
+        <li><strong>Workflow:</strong> Debris arrives in surges of thickness <code>h_max</code>. The velocity for each stage <code>v_n</code> is correlated to the cumulative volume deposited. The impact is applied as a UDL over the current impacting thickness.</li>
+    </ul>
+    <div class="logic-box">
+        <strong>Justification:</strong> This recognizes that previously deposited debris provides a "cushioning effect" and that subsequent surges hit at a higher elevation on the stem with attenuated relative energy.
+    </div>
+</section>
+
+<section>
+    <h2>4. Geotechnical Stability (Geoguide 1)</h2>
+    <span class="reference-tag">Ref: Geoguide 1 | TGN 44</span>
+    <ul>
+        <li><strong>Partial Factors:</strong> Apply <strong>1.2 on tan φ'</strong> (Soil Strength) and <strong>1.0 on Earth Pressure</strong>.</li>
+        <li><strong>Impacting Layer:</strong> Modeled as <strong>Drained</strong>.</li>
+        <li><strong>Static Layer:</strong> Previous surges modeled as <strong>Undrained (Static)</strong> with <code>K_a = 1.0</code>.</li>
+        <li><strong>Phreatic Surface:</strong> A water table is adopted at the interface of the two layers.</li>
+    </ul>
+    <div class="logic-box">
+        <strong>Justification:</strong> Adopting <code>K_a = 1.0</code> for the static layer is a conservative requirement to account for the semi-fluid and unconsolidated state of freshly trapped debris.
+    </div>
+</section>
+
+<section>
+    <h2>5. Tie-Back Design & Global Stability</h2>
+    <span class="reference-tag">Ref: LPMit Design Tips 12 | GEO Paper 3/2013</span>
+    <ul>
+        <li><strong>Tie-Backs:</strong> Ultimate pull-out <code>R_ult = 0.35 MPa × πDL_fixed</code>. A <strong>Resistance Efficiency Factor (η)</strong> is applied to account for progressive debonding along the fixed length.</li>
+        <li><strong>Global Stability:</strong> Hillside FOS must be 1.2 (CTL 1), 1.1 (CTL 2), or 1.0 (CTL 3) with the barrier and debris load in place.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>6. Structural Sectional Design (ULS)</h2>
+    <span class="reference-tag">Ref: HK Concrete Code | GEO Report No. 339</span>
+    <ul>
+        <li><strong>Analysis:</strong> Cantilever model fixed at the <strong>intersection of centerlines</strong>.</li>
+        <li><strong>Partial Factors:</strong> <strong>1.4 for Adverse Loads</strong> and <strong>1.0 for Beneficial Loads</strong>.</li>
+        <li><strong>Uplift:</strong> Ignored for reinforcement sizing to ensure maximum robustness.</li>
+        <li><strong>Scenario Separation:</strong> Peak flow impact and <strong>Boulder impact</strong> are analyzed as independent scenarios; they are not superimposed.</li>
+    </ul>
+</section>
+
+<table>
+    <thead>
+        <tr>
+            <th>Design Stage</th>
+            <th>Reference Standard</th>
+            <th>Key Compliance Constraint</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Impact Force</td>
+            <td>TGN 52 / GEO 358</td>
+            <td>Use α = 1.5; Treated as Dead Load.</td>
+        </tr>
+        <tr>
+            <td>Filling Model</td>
+            <td>GEO 339 / TGN 52</td>
+            <td>Velocity-stepped surges of thickness h_max.</td>
+        </tr>
+        <tr>
+            <td>Stability</td>
+            <td>Geoguide 1</td>
+            <td>1.2 factor on Soil Strength; 1.0 on Earth Pressure.</td>
+        </tr>
+        <tr>
+            <td>Anchors</td>
+            <td>LPMit Tips 12</td>
+            <td>Apply η (Efficiency Factor) to fixed length.</td>
+        </tr>
+        <tr>
+            <td>Global FOS</td>
+            <td>GEO Paper 3/2013</td>
+            <td>Risk-based FOS according to CTL Category.</td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
+
+<!-- PAGE 2: LS-DYNA WORKFLOW -->
+<div id="lsdyna" class="page">
+    <header>
+        <h1>Basis of Design: LS-DYNA Coupled Analysis</h1>
+        <p><strong>Methodology:</strong> 3D finite element with barrier modelled</p>
+    </header>
+
+    <section>
+        <h2>1. Direct Force & Surge Extraction</h2>
+        <span class="reference-tag">Ref: GEO Report No. 325 | GEO Report No. 358</span>
+        <ul>
+            <li><strong>Impact Extraction:</strong> The <strong>Impact Force vs. Time</strong> history is extracted directly from the coupled debris-structure model.</li>
+            <li><strong>Surge-up Observation:</strong> Surge behavior and run-up heights are observed directly from simulation outputs, bypassing energy principle formulas.</li>
+        </ul>
+        <div class="logic-box">
+            <strong>Simplification Logic:</strong> Only <strong>one critical design scenario</strong> is assessed (Maximum Force). This force encapsulates both dynamic peak and static dominant phases, ensuring the most conservative structural envelope is used.
+        </div>
+    </section>
+
+    <section>
+        <h2>2. Forces on wall assumptions</h2>
+        <ul>
+            <li><strong>Force Distribution:</strong> The maximum extracted force is applied as a <strong>UDL</strong> across the <strong>maximum pile-up thickness</strong> recorded in the simulation.</li>
+            <li><strong>Pore Pressure:</strong> Water is intrinsic to the LS-DYNA force extraction; therefore, no additional lateral pore water pressure is superimposed.</li>
+            <li><strong>Uplift Assumption:</strong> Uplift pressure is calculated from the <strong>top of the debris pile</strong> down to the base slab.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>3. Stability Results & Comparative Justification</h2>
+        <p>Comparison between LS-DYNA results and conventional 2D/Free-field methods:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Stability Check</th>
+                    <th>Observed Result</th>
+                    <th>Engineering Reasoning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Pile-up Thickness</strong></td>
+                    <td>Smaller (↓)</td>
+                    <td>Coupled models account for 3D energy dissipation and lateral spreading.</td>
+                </tr>
+                <tr>
+                    <td><strong>FOS Sliding</strong></td>
+                    <td>Greater (↑)</td>
+                    <td>Reduced pile-up thickness results in a lower total horizontal sliding force.</td>
+                </tr>
+                <tr>
+                    <td><strong>FOS Bearing</strong></td>
+                    <td>Greater (↑)</td>
+                    <td>Reduced total debris mass and improved eccentricity due to realistic deposition profile.</td>
+                </tr>
+                <tr>
+                    <td><strong>FOS Overturning</strong></td>
+                    <td>Greater (↓)</td>
+                    <td>Despite higher uplift (calculated from pile-up surface), the significantly reduced thickness results in a smaller destabilizing moment arm.</td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Below shows typical FOS results from LS-DYNA scenarios with varying debris densities and design cases:</p>
+        <div class="table-container">
+        <table>
+                <thead>
+                    <tr><th>Model</th><th>Impact force</th><th>Debris thickn</th><th>Density</th><th>Design Scenario</th><th>Normal Force</th><th>Sliding force</th><th>Overturning Moment</th><th>Resisting Moment</th><th>FOS (Sliding)</th><th>FOS (Overturning)</th><th>FOS (Bearing)</th></tr>
+                </thead>
+                <tbody>
+                     <tr><td>Barrier</td><td>73.84</td><td>3.04</td><td>1900</td><td>-</td><td>363.51</td><td>128.40</td><td>656.50</td><td>1502.00</td><td>0.57</td><td>1.71</td><td>2.288</td></tr>
+                    <tr><td>Barrier</td><td>85.50</td><td>3.04</td><td>2200</td><td>-</td><td>399.99</td><td>145.60</td><td>688.70</td><td>1640.60</td><td>0.52</td><td>1.63</td><td>2.382</td></tr>
+                    <tr><td>Free field</td><td>77.98</td><td>1.78</td><td>1900</td><td>1</td><td>354.23</td><td>106.20</td><td>270.20</td><td>1138.10</td><td>0.45</td><td>2.03</td><td>4.21</td></tr>
+                    <tr><td>Free field</td><td>90.29</td><td>1.78</td><td>2200</td><td>1</td><td>376.59</td><td>121.30</td><td>295.10</td><td>1219.30</td><td>0.44</td><td>1.85</td><td>4.132</td></tr>
+                    <tr><td>Free field</td><td>61.19</td><td>3.56</td><td>1900</td><td>2</td><td>438.87</td><td>207.10</td><td>718.60</td><td>1652.20</td><td>0.77</td><td>1.23</td><td>2.299</td></tr>
+                    <tr><td>Free field</td><td>70.85</td><td>3.56</td><td>2200</td><td>2</td><td>481.59</td><td>237.50</td><td>782.90</td><td>1814.50</td><td>0.76</td><td>1.16</td><td>2.318</td></tr>
+                    <tr><td>Free field</td><td>0</td><td>3.56</td><td>1900</td><td>Deposited</td><td>388.23</td><td>182.90</td><td>794.80</td><td>1652.20</td><td>0.69</td><td>1.27</td><td>2.079</td></tr>
+                    <tr><td>Free field</td><td>0</td><td>3.56</td><td>2200</td><td>Deposited</td><td>430.95</td><td>208.40</td><td>839.70</td><td>1814.50</td><td>0.64</td><td>1.21</td><td>2.161</td></tr>
+                    <tr><td>Free field</td><td>0</td><td>3.04</td><td>2200</td><td>Deposited</td><td>399.987</td><td>161.70</td><td>677.80</td><td>1640.60</td><td>0.49</td><td>1.47</td><td>2.420</td></tr>
+                </tbody>
+                </tbody>
+            </table>
+            </div>
+    </section>
+        <div class="logic-box">
+            <strong>Conclusion:</strong> LS-DYNA provides a more efficient design by removing the conservative assumptions of depth-averaged free-field models while maintaining safety through direct interaction modeling.
+        </div>
+    </section>
+</div>
+
+<!-- PAGE 3: MAPPING -->
+<div id="mapping" class="page">
+    <header>
+        <h1>Methodology Mapping: Replaced vs. Retained Steps</h1>
+        <p> </p>
+    </header>
+
+    <section>
+       <section>
+        <h2>1. Steps REPLACED by LS-DYNA Simulation</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Conventional Step</th>
+                    <th>LS-DYNA Replacement</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Manual Velocity-Stepped Scenarios</td>
+                    <td><strong>Dynamic Pile-up Simulation:</strong> The model clearly shows if debris arrives in surges or piles up slowly, making manual stage assumptions redundant.</td>
+                </tr>
+                <tr>
+                    <td>Energy Principle Surge-up (h_s)</td>
+                    <td><strong>Direct Simulation Observation:</strong> True splash-up and run-up are observed and measured directly from the model.</td>
+                </tr>
+                <tr>
+                    <td>α Factor (1.5) and Velocity Correlation</td>
+                    <td><strong>Direct Force Extraction:</strong> Real-time contact pressure is extracted from the interaction, replacing empirical hydrodynamic formulas.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>2. Steps RETAINED (Must be done MANUALLY)</h2>
+        <div class="logic-box">
+            <h3>A. Geotechnical Stability Calculation</h3>
+            <p>Verification of <strong>Sliding, Overturning, and Bearing Capacity</strong> (Geoguide 1) must still be done manually. The LS-DYNA force serves as the <strong>Action</strong> input for these stability equations.</p>
+        </div>
+
+        <div class="logic-box">
+            <h3>B. Retention Capacity Verification</h3>
+            <p>Manual proof of storage volume against <code>V_design</code> (including <strong>8% bulk factor</strong>) is still required to justify barrier sizing.</p>
+        </div>
+
+        <div class="logic-box">
+            <h3>C. Structural RC Reinforcement Design</h3>
+            <p>Final rebar sizing, detailing, and crack control for the stem and base must follow the <strong>HK Concrete Code</strong> based on the extracted loads.</p>
+        </div>
+    </section>
+
+    
+    <section>
+        <h2>3. Conclusion/Evaluation</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Benefits (Pros)</th>
+                    <th>Constraints (Cons)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>More Realistic Interaction:</strong> Captures true structure-debris coupled behavior.</td>
+                    <td><strong>Manual Retention:</strong> Does <u>not</u> replace the need for manual stability and capacity calculations.</td>
+                </tr>
+                <tr>
+                    <td><strong>Optimized Design:</strong> Often reduces stem requirements due to 3D dissipation.</td>
+                    <td><strong>Computational Cost:</strong> Extremely long run-times and HPC requirements.</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+<!-- PAGE 4: REFERENCES -->
+<div id="references" class="page active">
+    <header>
+        <h1>Design Guideline Evolution & References</h1>
+        <p><strong>Timeline:</strong> Changes following each GEO Report Update (2012-2023)</p>
+    </header>
+
+    <section>
+        <h2>GEO Report No. 270 (2012)</h2>
+        <span class="reference-tag">Ref: <a href="https://www.cedd.gov.hk/filemanager/eng/content_486/er270links.pdf" target="_blank">GEO Report No. 270 </a></span>
+        <ul>
+            <li>Used the same design impact velocity for all phases of impact.</li>
+            <li>Ignored the beneficial self-weight of the debris (H_Deb) during stability assessment.</li>
+        </ul>
+
+        <h2>GEO Report No. 333 (2018)</h2>
+        <span class="reference-tag">Ref: <a href="https://www.cedd.gov.hk/filemanager/eng/content_581/er333link.pdf" target="_blank">GEO Report No. 333 </a></span>
+        <ul>
+            <li>Introduced a design velocity as a <strong>step function</strong> instead of a constant value (acknowledging velocity reduction upon impact).</li>
+            <li>Maximum design debris velocity is different for each phase (limited to 70% of max free-field design velocity).</li>
+            <li>Design debris impact thickness should be the larger of (i) maximum free-field thickness, (ii) a nominal thickness of 0.5m, or (iii) estimated thickness of accumulated boulders.</li>
+        </ul>
+
+        <h2>GEO Report No. 339 (2018)</h2>
+        <span class="reference-tag">Ref: <a href="https://www.cedd.gov.hk/filemanager/eng/content_962/er339links.pdf" target="_blank">GEO Report No. 339 </a></span>
+        <ul>
+            <li>The self-weight of impacting debris should be taken as **Dead Load** in design (not surcharge), allowing beneficial effects to be considered in stability analysis.</li>
+            <li>Superposition of debris flow impact load and boulder impact load is not required if the largest entrainable boulder is less than 0.5m.</li>
+            <li>Provision of baffles may optimize structural design by making superposition unnecessary.</li>
+            <li>Updates reduced barrier mass by approx. 60% compared to GEO 270 guidelines.</li>
+        </ul>
+
+        <h2>TGN 44, 47, 52 (2020-2023 Updates)</h2>
+        <span class="reference-tag">Ref: <a href="https://www.cedd.gov.hk/filemanager/eng/content_427/TGN%2044_1A.pdf" target="_blank">TGN 44 </a> | <a href="https://www.cedd.gov.hk/filemanager/eng/content_427/TGN%2047_1A.pdf" target="_blank">TGN 47 </a> | <a href="https://www.cedd.gov.hk/filemanager/eng/content_427/TGN%2052_1B.pdf" target="_blank">TGN 52 </a></span>
+        <ul>
+            <li>TGN 44 provides guidance on assessing debris flow velocity based on GEO Report 333 methods.</li>
+            <li>TGN 52 stipulated the use of α = 1.5 for impact calculation, based on further research and large-scale testing.</li>
+        </ul>
+    </section>
+</div>
+
+<div class="footer">
+    <p>Nat.C| Hong Kong Rigid Barrier Design (2025)</p>
+</div>
+
+<script>
+    
+    function showPage(pageId) {
+        // Switch visibility
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        
+        // Switch active tab
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        
+        window.scrollTo(0,0);
+    }
+</script>
+
+</body>
+</html>
