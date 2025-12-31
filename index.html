@@ -358,17 +358,28 @@
     <section>
         <h2>2. Steps RETAINED (Must be done MANUALLY)</h2>
         <div class="logic-box">
-            <h3>A. Geotechnical Stability Calculation</h3>
-            <p>Verification of <strong>Sliding, Overturning, and Bearing Capacity</strong> (Geoguide 1) must still be done manually. The LS-DYNA force serves as the <strong>Action</strong> input for these stability equations.</p>
+            <h3>A. Free field model </h3>
+            <p>To determine barrier width using <strong>observed debris width </strong> at barrier location must still be done for initial sizing.
         </div>
 
-        <div class="logic-box">
+                 <div class="logic-box">
             <h3>B. Retention Capacity Verification</h3>
             <p>Manual proof of storage volume against <code>V_design</code> (including <strong>8% bulk factor</strong>) is still required to justify barrier sizing.</p>
         </div>
 
         <div class="logic-box">
-            <h3>C. Structural RC Reinforcement Design</h3>
+            <h3>C. Geotechnical Stability & tie back Calculation</h3>
+            <p>Verification of <strong>Sliding, Overturning, and Bearing Capacity</strong> (Geoguide 1) must still be done manually. The LS-DYNA force serves as an <strong>input</strong>  for these stability equations.</p>
+        </div>
+
+         <div class="logic-box">
+            <h3>D. Slope stabilty analysis</h3>
+            <p> The <strong>surface load </strong>due to addition of rigid barrier and debris must be considered in slope stability analysis.</p>
+        </div>
+    </section>
+
+        <div class="logic-box">
+            <h3>E. Structural RC Reinforcement Design</h3>
             <p>Final rebar sizing, detailing, and crack control for the stem and base must follow the <strong>HK Concrete Code</strong> based on the extracted loads.</p>
         </div>
     </section>
@@ -458,4 +469,3 @@
 
 </body>
 </html>
-
