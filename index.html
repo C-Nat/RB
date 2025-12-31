@@ -5,33 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rigid Barrier Basis of Design: Conventional vs LS-DYNA (HK 2025)</title>
     <style>
-        body { font-family: "Segoe UI", Arial, sans-serif; line-height: 1.5; color: #2c3e50; max-width: 1000px; margin: 20px auto; padding: 20px; background-color: #f4f7f6; }
-        nav { background: #34495e; padding: 10px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px; position: sticky; top: 10px; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        nav button { background: none; border: none; color: white; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+         body { 
+        font-family: "Segoe UI", Arial, sans-serif; 
+        line-height: 1.5; 
+        color: #2c3e50; 
+        max-width: 1000px; 
+        margin: 0 auto; /* Removed fixed 20px top margin for mobile */
+        padding: 15px; 
+        background-color: #f4f7f6; 
+        word-wrap: break-word; /* Forces long words to break */
+    }
+         nav { 
+        background: #34495e; 
+        padding: 10px; 
+        border-radius: 8px; 
+        margin-bottom: 20px; 
+        display: flex; 
+        flex-wrap: wrap; /* Allows buttons to wrap to next line on phones */
+        justify-content: center; 
+        gap: 8px; 
+        position: sticky; 
+        top: 0; 
+        z-index: 1000; 
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
+
+    nav button { 
+        background: none; 
+        border: none; 
+        color: white; 
+        padding: 8px 12px; 
+        font-weight: bold; 
+        cursor: pointer; 
+        border-radius: 4px; 
+        transition: 0.3s; 
+        font-size: 0.9rem; /* Scalable font */
+    }
         nav button:hover { background: #2980b9; }
         nav button.active { background: #2980b9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
         
         .page { display: none; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .page.active { display: block; }
 
-        header { border-bottom: 3px solid #2980b9; margin-bottom: 30px; padding-bottom: 10px; }
-        h1 { color: #2980b9; font-size: 22pt; margin-bottom: 5px; }
-        h2 { background: #f2f4f4; color: #2c3e50; padding: 10px; border-left: 6px solid #2980b9; font-size: 16pt; margin-top: 25px; }
+        header { 
+        border-bottom: 3px solid #2980b9; 
+        margin-bottom: 30px; 
+        padding-bottom: 10px; 
+        width: 100%; 
+    }
+         h1 { 
+        color: #2980b9; 
+        /* clamp(min, preferred, max) ensures text stays within bounds */
+        font-size: clamp(1.4rem, 5vw, 2.2rem); 
+        margin-bottom: 5px; 
+        line-height: 1.2;
+    }
+
+    h2 { 
+        background: #f2f4f4; 
+        color: #2c3e50; 
+        padding: 10px; 
+        border-left: 6px solid #2980b9; 
+        font-size: clamp(1.1rem, 4vw, 1.6rem); 
+        margin-top: 25px; 
+    }
         
         .reference-tag { font-weight: bold; color: #7f8c8d; font-size: 0.9em; display: block; margin-bottom: 5px; }
-        .logic-box { background-color: #ebf5fb; border: 1px solid #d6eaf8; padding: 15px; border-radius: 4px; margin: 10px 0; border-left: 4px solid #2980b9; }
-        
+        .logic-box { 
+        background-color: #ebf5fb; 
+        border: 1px solid #d6eaf8; 
+        padding: 12px; 
+        border-radius: 4px; 
+        margin: 10px 0; 
+        border-left: 4px solid #2980b9; 
+        font-size: 0.95rem;
+    }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 10pt; }
         th, td { border: 1px solid #bdc3c7; padding: 12px; text-align: left; }
         th { background-color: #34495e; color: white; }
         .table-container { overflow-x: auto; /* Enables horizontal scrolling */ }
-        
+
          a:link, a:visited {
         color: #0000EE; /* This makes links blue and stay blue after clicking */
     }
-        
+        .responsive-image { 
+    max-width: 100%; 
+    height: auto; 
+    display: block; 
+    margin: 20px auto; 
+}
         .footer { margin-top: 50px; font-size: 0.8em; color: #95a5a6; text-align: center; border-top: 1px solid #eee; padding-top: 10px; }
-        @media print { nav { display: none; } .page { display: block; page-break-after: always; box-shadow: none; border: 1px solid #eee; } }
+        @media (max-width: 600px) {
+        body { padding: 10px; }
+        .page { padding: 15px; }
+        nav button { flex: 1 1 40%; /* Buttons take half width on small phones */ font-size: 0.8rem; }
+    }
     </style>
 </head>
 <body>
@@ -54,10 +122,12 @@
     <h2>1. Debris Mobility & Geometric Sizing</h2>
     <span class="reference-tag">Ref: GEO Report No. 270 | GEO Report No. 339</span>
     <ul>
-        <li><strong>Free-Field Extraction:</strong> Extract peak velocity (<code>v_max</code>) and flow thickness (<code>h_max</code>) from numerical models.</li>
+        <li><strong>Free-Field Extraction:</strong> Determine width of barrier and extract peak velocity (<code>v_max</code>) and flow thickness (<code>h_max</code>) from numerical models.</li>
         <li><strong>Retention Capacity:</strong> Calculated using the design landslide volume plus an <strong>8% bulk factor</strong>. The storage wedge is modeled using an assumed storage angle (typically 1/2 to 2/3 of the natural slope).</li>
         <li><strong>Surge-up Height (h_s):</strong> Based on the Energy Principle: <code>h_s = h + v²/(2g)</code>.</li>
     </ul>
+    <!-- Image Insertion Point -->
+<img src="Dimension.png" alt="Mind map showing barrier sizing factors: width and height" class="responsive-image">
     <div class="logic-box">
         <strong>Justification:</strong> The 8% bulk factor accounts for volume dilation during transport. The surge-up check ensures the barrier crest level is sufficient to prevent overtopping from the frontal wave energy.
     </div>
@@ -270,15 +340,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>Manual Velocity-Stepped Scenarios</td>
-                    <td><strong>Dynamic Pile-up Simulation:</strong> The model clearly shows if debris arrives in surges or piles up slowly, making manual stage assumptions redundant.</td>
+                    <td>Multiple Scenarios with manual velocity-stepped graph</td>
+                    <td><strong>Pile-up Simulation:</strong> The model clearly shows if debris arrives in surges or piles up slowly, making manual stage assumptions redundant.</td>
                 </tr>
                 <tr>
                     <td>Energy Principle Surge-up (h_s)</td>
                     <td><strong>Direct Simulation Observation:</strong> True splash-up and run-up are observed and measured directly from the model.</td>
                 </tr>
                 <tr>
-                    <td>α Factor (1.5) and Velocity Correlation</td>
+                    <td>Dynamic force calculation from velocity C\correlation</td>
                     <td><strong>Direct Force Extraction:</strong> Real-time contact pressure is extracted from the interaction, replacing empirical hydrodynamic formulas.</td>
                 </tr>
             </tbody>
