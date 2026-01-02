@@ -169,7 +169,8 @@
         <li><strong>Phreatic Surface:</strong> A water table is adopted at the interface of the two layers.</li>
     </ul>
     <div class="logic-box">
-        <strong>Justification:</strong> Adopting <code>K_a = 1.0</code> for the static layer is a conservative requirement to account for the semi-fluid and unconsolidated state of freshly trapped debris.
+        <strong>Justification:</strong> Adopting <code>K_a = 1.0</code> for the static layer is a conservative requirement to account for the semi-fluid and unconsolidated state of freshly trapped debris.<br> The density adopted &rho; = 2200kg/m&sup3; according to discussion note 12 where it states "In the absense of site specific information, 2200kg/m&sup3; may be taken as a minimum for design purposes."
+        
     </div>
 </section>
 
@@ -299,18 +300,15 @@
         <div class="table-container">
         <table>
                 <thead>
-                    <tr><th>Model</th><th>Impact force</th><th>Debris thickn</th><th>Density</th><th>Design Scenario</th><th>Normal Force</th><th>Sliding force</th><th>Overturning Moment</th><th>Resisting Moment</th><th>FOS (Sliding)</th><th>FOS (Overturning)</th><th>FOS (Bearing)</th></tr>
+                    <tr><th>Model</th><th>Impact force</th><th>Debris thickn</th><th>Density</th><th>Design Scenario</th><th>Normal Force</th><th>Sliding force</th><th>Overturning Moment</th><th>Resisting Moment</th><th>Eccentricity</th><th>FOS (Sliding)</th><th>FOS (Overturning)</th><th>FOS (Bearing)</th></tr>
                 </thead>
                 <tbody>
-                     <tr><td>Barrier</td><td>73.84</td><td>3.04</td><td>1900</td><td>-</td><td>363.51</td><td>128.40</td><td>656.50</td><td>1502.00</td><td>0.57</td><td>1.71</td><td>2.288</td></tr>
-                    <tr><td>Barrier</td><td>85.50</td><td>3.04</td><td>2200</td><td>-</td><td>399.99</td><td>145.60</td><td>688.70</td><td>1640.60</td><td>0.52</td><td>1.63</td><td>2.382</td></tr>
-                    <tr><td>Free field</td><td>77.98</td><td>1.78</td><td>1900</td><td>1</td><td>354.23</td><td>106.20</td><td>270.20</td><td>1138.10</td><td>0.45</td><td>2.03</td><td>4.21</td></tr>
-                    <tr><td>Free field</td><td>90.29</td><td>1.78</td><td>2200</td><td>1</td><td>376.59</td><td>121.30</td><td>295.10</td><td>1219.30</td><td>0.44</td><td>1.85</td><td>4.132</td></tr>
-                    <tr><td>Free field</td><td>61.19</td><td>3.56</td><td>1900</td><td>2</td><td>438.87</td><td>207.10</td><td>718.60</td><td>1652.20</td><td>0.77</td><td>1.23</td><td>2.299</td></tr>
-                    <tr><td>Free field</td><td>70.85</td><td>3.56</td><td>2200</td><td>2</td><td>481.59</td><td>237.50</td><td>782.90</td><td>1814.50</td><td>0.76</td><td>1.16</td><td>2.318</td></tr>
-                    <tr><td>Free field</td><td>0</td><td>3.56</td><td>1900</td><td>Deposited</td><td>388.23</td><td>182.90</td><td>794.80</td><td>1652.20</td><td>0.69</td><td>1.27</td><td>2.079</td></tr>
-                    <tr><td>Free field</td><td>0</td><td>3.56</td><td>2200</td><td>Deposited</td><td>430.95</td><td>208.40</td><td>839.70</td><td>1814.50</td><td>0.64</td><td>1.21</td><td>2.161</td></tr>
-                    <tr><td>Free field</td><td>0</td><td>3.04</td><td>2200</td><td>Deposited</td><td>399.987</td><td>161.70</td><td>677.80</td><td>1640.60</td><td>0.49</td><td>1.47</td><td>2.420</td></tr>
+            
+                    <tr><td>Barrier</td><td>85.50</td><td>3.04</td><td>2200</td><td>-</td><td>399.99</td><td>145.60</td><td>688.70</td><td>1640.60</td><td>0.52</td><td>1.63</td><td>2.382</td><td>1.16</td></tr>
+                    <tr><td>Free field</td><td>90.29</td><td>1.78</td><td>2200</td><td>1</td><td>376.59</td><td>121.30</td><td>295.10</td><td>1219.30</td><td>0.44</td><td>1.85</td><td>4.132</td><td>1.50</td></tr>
+                    <tr><td>Free field</td><td>70.85</td><td>3.56</td><td>2200</td><td>2</td><td>481.59</td><td>237.50</td><td>782.90</td><td>1814.50</td><td>0.76</td><td>1.16</td><td>2.318</td><td>0.64</td></tr>
+                    <tr><td>Free field</td><td>0</td><td>3.56</td><td>2200</td><td>Deposited</td><td>430.95</td><td>208.40</td><td>839.70</td><td>1814.50</td><td>0.64</td><td>1.21</td><td>2.161</td><td>0.84</td></tr>
+                    <tr><td>Free field</td><td>0</td><td>3.04</td><td>2200</td><td>Deposited</td><td>399.987</td><td>161.70</td><td>677.80</td><td>1640.60</td><td>0.49</td><td>1.47</td><td>2.420</td><td>1.25</td></tr>
                 </tbody>
                 </tbody>
             </table>
@@ -342,11 +340,11 @@
             <tbody>
                 <tr>
                     <td>Multiple Scenarios with manual velocity-stepped graph</td>
-                    <td><strong>Pile-up Simulation:</strong> The model clearly shows if debris arrives in surges or piles up slowly, making manual stage assumptions redundant.</td>
+                    <td><strong>Surge up Simulation:</strong> The model clearly shows if debris arrives in surges or piles up slowly, making manual stage assumptions redundant.</td>
                 </tr>
                 <tr>
                     <td>Energy Principle Surge-up (h_s)</td>
-                    <td><strong>Direct Simulation Observation:</strong> True splash-up and run-up are observed and measured directly from the model.</td>
+                    <td><strong>Direct Simulation Observation:</strong> True surge and run-up are observed and measured directly from the model.</td>
                 </tr>
                 <tr>
                     <td>Dynamic force calculation from velocity correlation</td>
@@ -360,7 +358,7 @@
         <h2>2. Steps RETAINED (Must be done MANUALLY)</h2>
         <div class="logic-box">
             <h3>A. Free field model </h3>
-            <p>To determine barrier width using <strong>observed debris width </strong> at barrier location must still be done for initial sizing.
+            <p>To determine <strong> barrier location, orientation and width </strong>using debris mobility resutls must still be done for initial sizing.
         </div>
 
                  <div class="logic-box">
@@ -470,6 +468,7 @@
 
 </body>
 </html>
+
 
 
 
